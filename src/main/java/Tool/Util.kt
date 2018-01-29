@@ -1,9 +1,9 @@
 package Tool
 
-import Command.BaseCommand
-import Command.HelpCommand
-import Command.RunCommand
-import Command.VersionCommand
+import KtJVM.Command.BaseCommand
+import KtJVM.Command.HelpCommand
+import KtJVM.Command.RunCommand
+import KtJVM.Command.VersionCommand
 
 
 

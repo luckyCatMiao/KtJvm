@@ -1,24 +1,21 @@
 package Parser
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Preconditions.*
-import com.google.common.io.Files
-import com.sun.corba.se.impl.activation.CommandHandler.parseError
-import java.io.ByteArrayInputStream
-import java.io.DataInputStream
+import com.google.common.base.Preconditions.checkArgument
+import com.google.common.base.Preconditions.checkState
 import java.io.File
 
 
-object ClassParser{
+class ClassParser{
     private lateinit var path: String
+    private lateinit var javaclass: JavaClass
+    private lateinit var reader: DataReader
 
     fun parse(path: String) {
         checkArgument(File(path).exists(),"the file ${path} do not exist!")
         this.path=path;
-
-        val javaclass=JavaClass()
-        val reader=DataReader(path)
-        parseClass(javaclass,reader)
+        this.javaclass=JavaClass()
+        this.reader=DataReader(path)
+        parseClass()
 
 
     }
@@ -26,11 +23,10 @@ object ClassParser{
     /**
      * start parse
      */
-    private fun parseClass(javaclass: JavaClass, reader: DataReader) {
-        //magic
-        val magic=reader.readUnsignedInt()
-        checkState(ClassChecker.checkMagic(magic),parseError("magic"))
-        //javaclass.magic=magic
+    private fun parseClass() {
+
+        parseMagic()
+        parseVersion()
 
         println(javaclass)
 
@@ -45,6 +41,23 @@ object ClassParser{
 //        val stream=DataInputStream(ByteArrayInputStream(bytes))
 //        stream.readInt();
 //        //println(bytes)
+    }
+
+    private fun parseVersion(){
+        val minorVersion= reader.readUnsignedShort()
+        val majorVersion=reader.readUnsignedShort()
+        val check=ClassChecker.checkVersion(minorVersion,majorVersion)
+        checkState(check, parseError("version"))
+        javaclass.minorVersion = minorVersion
+        javaclass.majorVersion = majorVersion
+
+    }
+
+    private fun parseMagic() {
+        val magic = reader.readUnsignedInt()
+        val check=ClassChecker.checkMagic(magic)
+        checkState(check, parseError("magic"))
+        javaclass.magic = magic
     }
 
     /**
