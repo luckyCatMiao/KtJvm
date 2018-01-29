@@ -1,5 +1,6 @@
 package Parser
 
+import Parser.ConstantPool.ConstantPoolParser
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Preconditions.checkState
 import java.io.File
@@ -27,6 +28,7 @@ class ClassParser{
 
         parseMagic()
         parseVersion()
+        parseConstantPool()
 
         println(javaclass)
 
@@ -41,6 +43,10 @@ class ClassParser{
 //        val stream=DataInputStream(ByteArrayInputStream(bytes))
 //        stream.readInt();
 //        //println(bytes)
+    }
+
+    private fun parseConstantPool() {
+        ConstantPoolParser(javaclass,reader).parse()
     }
 
     private fun parseVersion(){
