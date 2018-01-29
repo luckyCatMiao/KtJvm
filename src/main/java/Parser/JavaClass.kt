@@ -1,0 +1,6 @@
+package Parser
+
+class JavaClass()
+{
+
+}
