@@ -5,7 +5,15 @@ import KtJVM.Command.HelpCommand
 import KtJVM.Command.RunCommand
 import KtJVM.Command.VersionCommand
 
+fun equal(a:Any?,b:Any?):Boolean{
+    if(a==null||b==null)
+    {
+        return false
+    }else{
+        return a.equals(b)
+    }
 
+}
 
 object CommandParser
 {

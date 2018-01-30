@@ -3,10 +3,10 @@ package Parser.ConstantPool
 import KtEx.valueOfObject
 import Parser.DataReader
 import Parser.JavaClass
+import Tool.ReflectionUtil
+import Tool.equal
 import com.google.common.base.Charsets
-import com.google.common.base.Preconditions.checkState
 import io.reactivex.Observable
-import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 
 
@@ -32,15 +32,16 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
     private fun parseConstant() {
         val tag=reader.readUnsignedByte()
         //use reflection to call function
-        val klass=ConstantTag::class.java.kotlin
+        val klass= ConstantType::class.java.kotlin
         Observable.fromIterable(klass.members)
-                .filter { Helper.isProperty(it)}
+                .filter { ReflectionUtil.isProperty(it)}
                 .cast(KProperty::class.java)
-                .filter { Helper.equal(it.valueOfObject(ConstantTag),tag) }
-                .map { Helper.toMethodName(it) }
+                .filter { equal(it.valueOfObject(ConstantType),tag) }
+                .map { toParseMethodName(it) }
                 .subscribe{
                     //call functions by names
-                    Helper.callMethodByName(it,this,pool)
+
+                    ReflectionUtil.callMethodByName(it,this,{ pool.add(it as Constant)})
                 }
 
 
@@ -109,45 +110,7 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
         return InterfaceMethodrefConstant(i1,i2)
     }
 
-    /**
-     * internal helper object
-     */
-    object Helper
-    {
-        fun isProperty(it:Any)=it is KProperty<*>
-        fun isFunction(it:Any)=it is KFunction<*>
-        fun equal(a:Any?,b:Any?):Boolean{
-             if(a==null||b==null)
-            {
-                return false
-            }else{
-                return a.equals(b)
-            }
+    private fun toParseMethodName(it: KProperty<*>)="parse"+it.name.replace("CONSTANT_","")
 
-        }
-
-        fun toMethodName(it: KProperty<*>)="parse"+it.name.replace("CONSTANT_","")
-
-
-        /**
-         * use reflection to call parsing method then add resulted constant to pool
-         */
-        fun callMethodByName(name: String, target: Any, pool: ConstantPool) {
-            val klass=target::class.java.kotlin
-            Observable.fromIterable(klass.members)
-                    .filter { isFunction(it)}
-                    .cast(KFunction::class.java)
-                    .filter { equal(it.name,name) }
-                    .toList()
-                    .subscribe({
-                        println(it.size)
-                        checkState(it.size==1,"internal error!method ${name} do not exist!")
-                        val c=it[0].call(target) as Constant
-                        pool.add(c)
-                    },{
-                        RuntimeException("rxjava internal error")
-                    })
-        }
-    }
 
 }

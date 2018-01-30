@@ -1,6 +1,6 @@
 package Parser.ConstantPool
 
-object ConstantTag{
+object ConstantType {
     var CONSTANT_Class = 7
     var CONSTANT_Fieldref = 9
     var CONSTANT_Methodref = 10
