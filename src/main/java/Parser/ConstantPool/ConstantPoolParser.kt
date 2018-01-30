@@ -2,47 +2,51 @@ package Parser.ConstantPool
 
 import KtEx.times
 import KtEx.valueOfObject
-import Parser.DataReader
+import Parser.ClassChecker
 import Parser.JavaClass
+import Tool.DataReader
 import Tool.ReflectionUtil
 import Tool.equal
 import com.google.common.base.Charsets
+import com.google.common.base.Preconditions
 import io.reactivex.Observable
 import kotlin.reflect.KProperty
 
 
-class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
-    private val pool=ConstantPool()
+class ConstantPoolParser(val javaclass: JavaClass, val reader: DataReader) {
+    private val pool = ConstantPool()
 
-    fun parse() {
+    fun parse(): ConstantPool {
 
-        var count=reader.readUnsignedShort()
+        var count = reader.readUnsignedShort()
         //according to the specification,only (count-1) constants exist in the constants pool
-        count-=1
+        count -= 1
         count.times {
             parseConstant()
         }
-        println(pool)
+        ClassChecker.checkIndexConstantPool(pool)
+
+        return pool
+
     }
 
     /**
      * read from stream,then try to parse one constant
      */
     private fun parseConstant() {
-        val tag=reader.readUnsignedByte()
+        val tag = reader.readUnsignedByte()
         //use reflection to call function
-        val klass= ConstantType::class.java.kotlin
+        val klass = ConstantType::class.java.kotlin
         Observable.fromIterable(klass.members)
-                .filter { ReflectionUtil.isProperty(it)}
+                .filter { ReflectionUtil.isProperty(it) }
                 .cast(KProperty::class.java)
-                .filter { equal(it.valueOfObject(ConstantType),tag) }
+                .filter { equal(it.valueOfObject(ConstantType), tag) }
                 .map { toParseMethodName(it) }
-                .subscribe{
+                .subscribe {
                     //call functions by names
-                    ReflectionUtil.callMethodByName(it,this,{ pool.add(it as Constant)})
+                    ReflectionUtil.callMethodByName(it, this, { pool.add(it as Constant) })
                 }
     }
-
 
 
     fun parseInteger(): IntegerConstant {
@@ -51,62 +55,64 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
     }
 
     fun parseFloat(): FloatConstant {
-        val float=reader.readFloat()
+        val float = reader.readFloat()
         return FloatConstant(float)
     }
 
     fun parseLong(): LongConstant {
-        val long=reader.readLong()
+        val long = reader.readLong()
         return LongConstant(long)
     }
 
-    fun parseDouble():DoubleConstant{
-        val double=reader.readDouble()
+    fun parseDouble(): DoubleConstant {
+        val double = reader.readDouble()
         return DoubleConstant(double)
     }
 
-    fun parseUtf8():Utf8Constant{
-        val length=reader.readUnsignedShort()
-        val bytes=reader.readFully(length)
-        val str=String(bytes,Charsets.UTF_8)
+    fun parseUtf8(): Utf8Constant {
+        val length = reader.readUnsignedShort()
+        val bytes = reader.readFully(length)
+        val str = String(bytes, Charsets.UTF_8)
         return Utf8Constant(str)
     }
 
-    fun parseString():StringConstant{
-        val string_index=reader.readUnsignedShort()
+    fun parseString(): StringConstant {
+        val string_index = reader.readUnsignedShort()
         return StringConstant(string_index)
     }
 
-    fun parseClass():ClassConstant{
-        val name_index=reader.readUnsignedShort()
+
+    fun parseClass(): ClassConstant {
+        val name_index = reader.readUnsignedShort()
         return ClassConstant(name_index)
     }
 
     fun parseNameAndType(): NameAndTypeConstant {
-        val i1=reader.readUnsignedShort()
-        val i2=reader.readUnsignedShort()
-        return NameAndTypeConstant(i1,i2)
+        val i1 = reader.readUnsignedShort()
+        val i2 = reader.readUnsignedShort()
+        return NameAndTypeConstant(i1, i2)
     }
 
     fun parseFieldref(): FieldrefConstant {
-        val i1=reader.readUnsignedShort()
-        val i2=reader.readUnsignedShort()
-        return FieldrefConstant(i1,i2)
+        val i1 = reader.readUnsignedShort()
+        val i2 = reader.readUnsignedShort()
+        return FieldrefConstant(i1, i2)
     }
 
     fun parseMethodref(): MethodrefConstant {
-        val i1=reader.readUnsignedShort()
-        val i2=reader.readUnsignedShort()
-        return MethodrefConstant(i1,i2)
+        val i1 = reader.readUnsignedShort()
+        val i2 = reader.readUnsignedShort()
+        return MethodrefConstant(i1, i2)
     }
 
     fun parseInterfaceMethodref(): InterfaceMethodrefConstant {
-        val i1=reader.readUnsignedShort()
-        val i2=reader.readUnsignedShort()
-        return InterfaceMethodrefConstant(i1,i2)
+        val i1 = reader.readUnsignedShort()
+        val i2 = reader.readUnsignedShort()
+        return InterfaceMethodrefConstant(i1, i2)
     }
 
-    private fun toParseMethodName(it: KProperty<*>)="parse"+it.name.replace("CONSTANT_","")
+
+    private fun toParseMethodName(it: KProperty<*>) = "parse" + it.name.replace("CONSTANT_", "")
 
 
 }

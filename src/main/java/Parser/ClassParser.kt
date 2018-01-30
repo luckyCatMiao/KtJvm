@@ -1,6 +1,7 @@
 package Parser
 
 import Parser.ConstantPool.ConstantPoolParser
+import Tool.DataReader
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Preconditions.checkState
 import java.io.File
@@ -15,7 +16,7 @@ class ClassParser{
         checkArgument(File(path).exists(),"the file ${path} do not exist!")
         this.path=path;
         this.javaclass=JavaClass()
-        this.reader=DataReader(path)
+        this.reader= DataReader(path)
         parseClass()
 
 
@@ -29,24 +30,38 @@ class ClassParser{
         parseMagic()
         parseVersion()
         parseConstantPool()
+        parseAccessFlags()
+        parseClassName()
+        parseSuperClassName()
 
         println(javaclass)
 
-//        val bytes = Files.asByteSource(file).read()
-////        Observable.fromIterable(bytes.toList())
-////                .map {  parseUnsigned(it) }
-////                .map { Integer.toHexString(it) }
-////                .toList()
-////                .subscribe{s -> System.out.println(s)}
-//
-//
-//        val stream=DataInputStream(ByteArrayInputStream(bytes))
-//        stream.readInt();
-//        //println(bytes)
+
+    }
+
+    private fun parseSuperClassName() {
+        val index= reader.readUnsignedShort()
+        val check=ClassChecker.checkIndexConstantPoolSingle(javaclass.constantPool,index)
+        checkState(check, parseError("superClassName"))
+        javaclass.superClassNameIndex = index
+    }
+
+    private fun parseClassName() {
+        val index= reader.readUnsignedShort()
+        val check=ClassChecker.checkIndexConstantPoolSingle(javaclass.constantPool,index)
+        checkState(check, parseError("className"))
+        javaclass.classNameIndex = index
+    }
+
+    private fun parseAccessFlags() {
+        val flag= reader.readUnsignedShort()
+        val check=ClassChecker.checkFlag(flag)
+        checkState(check, parseError("access Flag"))
+        javaclass.accessFlags = flag
     }
 
     private fun parseConstantPool() {
-        ConstantPoolParser(javaclass,reader).parse()
+        javaclass.constantPool=ConstantPoolParser(javaclass,reader).parse()
     }
 
     private fun parseVersion(){
@@ -69,7 +84,7 @@ class ClassParser{
     /**
      * return a description of error
      */
-    private fun parseError(name:String)="parse error! reason:${name},class file:${path}"
+    protected fun parseError(name:String)="parse error! reason:${name},class file:${path}"
 
 
 
