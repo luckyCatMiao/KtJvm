@@ -19,8 +19,8 @@ class ConstantPoolParser(val javaclass: JavaClass, val reader: DataReader) {
     fun parse(): ConstantPool {
 
         var count = reader.readUnsignedShort()
-        //according to the specification,only (count-1) constants exist in the constants pool
-        count -= 1
+        //according to the specification,only (count-2) constants exist in the constants pool
+        count -= 2
         count.times {
             parseConstant()
         }
@@ -46,6 +46,9 @@ class ConstantPoolParser(val javaclass: JavaClass, val reader: DataReader) {
                     //call functions by names
                     ReflectionUtil.callMethodByName(it, this, { pool.add(it as Constant) })
                 }
+
+
+
     }
 
 
