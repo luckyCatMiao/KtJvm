@@ -3,8 +3,12 @@ package Tool
 import Parser.ConstantPool.Constant
 import Parser.ConstantPool.ConstantPool
 import com.google.common.base.Preconditions
+import com.sun.org.apache.xpath.internal.operations.Bool
+import com.sun.xml.internal.bind.v2.schemagen.episode.Klass
 import io.reactivex.Observable
 import java.util.function.BiConsumer
+import java.util.function.Predicate
+import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 
@@ -13,18 +17,18 @@ import kotlin.reflect.KProperty
  */
 object ReflectionUtil
 {
+    private val exception = RuntimeException("RXJava internal error")
+
     fun isProperty(it:Any)=it is KProperty<*>
     fun isFunction(it:Any)=it is KFunction<*>
 
 
-    /**
-     * use reflection to call parsing method then add resulted constant to pool
-     */
-    fun callMethodByName(name: String, target: Any, resultConsumer:(Any?)->Unit) {
+    private fun<T:KCallable<*>> getByName(name: String, target: Any,resultConsumer:(Any?)->Unit, filter:(KCallable<*>)->Boolean,castClass:Class<T>) {
         val klass=target::class.java.kotlin
+
         Observable.fromIterable(klass.members)
-                .filter { isFunction(it) }
-                .cast(KFunction::class.java)
+                .filter { filter(it) }
+                .cast(castClass)
                 .filter { equal(it.name, name) }
                 .toList()
                 .subscribe({
@@ -33,7 +37,22 @@ object ReflectionUtil
                     val c=it[0].call(target)
                     resultConsumer(c)
                 },{
-                    RuntimeException("rxjava internal error")
+                    throw exception
                 })
+
+    }
+
+    /**
+     * use reflection to call parsing method then add resulted constant to pool
+     */
+    fun callMethodByName(name: String, target: Any, resultConsumer:(Any?)->Unit) {
+        getByName(name,target,resultConsumer,{ isFunction(it) },KFunction::class.java)
+
+    }
+
+    fun getPropertyByName(name: String, target: Any, resultConsumer:(Any?)->Unit) {
+        getByName(name,target,resultConsumer,{ isProperty(it) },KProperty::class.java)
+        val klass=target::class.java.kotlin
+
     }
 }

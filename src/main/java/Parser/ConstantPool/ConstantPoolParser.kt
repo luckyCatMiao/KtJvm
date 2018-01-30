@@ -1,5 +1,6 @@
 package Parser.ConstantPool
 
+import KtEx.times
 import KtEx.valueOfObject
 import Parser.DataReader
 import Parser.JavaClass
@@ -22,7 +23,6 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
 //            parseConstant()
 //        }
         parseConstant()
-
         println(pool)
     }
 
@@ -40,7 +40,6 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
                 .map { toParseMethodName(it) }
                 .subscribe{
                     //call functions by names
-
                     ReflectionUtil.callMethodByName(it,this,{ pool.add(it as Constant)})
                 }
 
