@@ -28,7 +28,7 @@ data class DoubleConstant(val value:Double):NumberConstant();
  * string
  */
 open class BaseStringConstant():Constant()
-data class UTF8Constant(val value:String):BaseStringConstant();
+data class Utf8Constant(val value:String):BaseStringConstant();
 data class StringConstant(val index:Int):BaseStringConstant();
 
 

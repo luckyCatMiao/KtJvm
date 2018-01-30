@@ -19,10 +19,9 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
         var count=reader.readUnsignedShort()
         //according to the specification,only (count-1) constants exist in the constants pool
         count-=1
-//        count.times {
-//            parseConstant()
-//        }
-        parseConstant()
+        count.times {
+            parseConstant()
+        }
         println(pool)
     }
 
@@ -68,11 +67,11 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
         return DoubleConstant(double)
     }
 
-    fun parseUtf8():UTF8Constant{
+    fun parseUtf8():Utf8Constant{
         val length=reader.readUnsignedShort()
         val bytes=reader.readFully(length)
         val str=String(bytes,Charsets.UTF_8)
-        return UTF8Constant(str)
+        return Utf8Constant(str)
     }
 
     fun parseString():StringConstant{
