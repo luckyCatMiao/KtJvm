@@ -41,8 +41,6 @@ class ConstantPoolParser(val javaclass:JavaClass,val reader:DataReader) {
                     //call functions by names
                     ReflectionUtil.callMethodByName(it,this,{ pool.add(it as Constant)})
                 }
-
-
     }
 
 

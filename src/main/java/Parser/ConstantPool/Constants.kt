@@ -5,11 +5,10 @@ import Tool.ReflectionUtil
 open class Constant(){
     var tag:Int=0
     init {
-        //use reflection to set tag
+        //use reflection to set tag by name
         val klass = this.javaClass.kotlin
         val fieldName="CONSTANT_"+klass.simpleName?.replace("Constant","")
         ReflectionUtil.getPropertyByName(fieldName,ConstantType,{ this.tag=it as Int})
-
     }
 }
 
@@ -29,13 +28,13 @@ data class DoubleConstant(val value:Double):NumberConstant();
  */
 open class BaseStringConstant():Constant()
 data class Utf8Constant(val value:String):BaseStringConstant();
-data class StringConstant(val index:Int):BaseStringConstant();
+data class StringConstant(val string_index:Int):BaseStringConstant();
 
 
 /**
  *
  */
-data class ClassConstant(val index:Int):Constant();
+data class ClassConstant(val name_index:Int):Constant();
 data class NameAndTypeConstant(val name_index:Int,val descriptor_index:Int):Constant();
 data class FieldrefConstant(val class_index:Int,val name_and_type_index:Int):Constant();
 data class MethodrefConstant(val class_index:Int,val name_and_type_index:Int):Constant();

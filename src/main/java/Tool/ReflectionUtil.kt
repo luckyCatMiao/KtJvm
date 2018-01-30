@@ -33,7 +33,7 @@ object ReflectionUtil
                 .toList()
                 .subscribe({
                     //println(it.size)
-                    Preconditions.checkState(it.size == 1, "internal error!method ${name} do not exist!")
+                    Preconditions.checkState(it.size == 1, "internal error!method or field ${name} do not exist!")
                     val c=it[0].call(target)
                     resultConsumer(c)
                 },{
@@ -52,7 +52,5 @@ object ReflectionUtil
 
     fun getPropertyByName(name: String, target: Any, resultConsumer:(Any?)->Unit) {
         getByName(name,target,resultConsumer,{ isProperty(it) },KProperty::class.java)
-        val klass=target::class.java.kotlin
-
     }
 }
