@@ -48,7 +48,7 @@ class ConstantPoolParser(val javaclass: JavaClass, val reader: DataReader) {
                 .subscribe ({
                     Preconditions.checkState(it.size == 1, "internal error!method  parseTag:${tag} do not exist!")
                     //call functions by names
-                    ReflectionUtil.callMethodByName(it[0], this, { pool.add(it as Constant,i) })
+                    ReflectionUtil.callMethodByName(it[0], this, { pool[i]=it as Constant })
                 },{
                      throw RuntimeException("error")
                 })

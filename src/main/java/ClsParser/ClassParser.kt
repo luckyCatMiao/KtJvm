@@ -1,7 +1,9 @@
 package ClsParser
 
+import ClsParser.Attritubes.AttritubeParser
 import KtEx.times
 import ClsParser.ConstantPool.ConstantPoolParser
+import ClsParser.Fields.Field
 import Tool.DataReader
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Preconditions.checkState
@@ -44,7 +46,20 @@ class ClassParser{
 
     private fun parseFields() {
         val count=reader.readUnsignedShort()
-        println(count)
+        parseField()
+    }
+
+    private fun parseField() {
+        val field=Field()
+
+        val access_flags=reader.readUnsignedShort()
+        val name_index=reader.readUnsignedShort()
+        val descriptor_index=reader.readUnsignedShort()
+
+        val attributesCount=reader.readUnsignedShort()
+        val attrs = AttritubeParser(reader,javaclass.constantPool).parse()
+        field.attrMan.addAll(attrs)
+
     }
 
     private fun parseInterfaceNames() {

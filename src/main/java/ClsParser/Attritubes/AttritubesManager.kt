@@ -1,4 +1,14 @@
 package ClsParser.Attritubes
 
-class AttritubesManager {
+
+
+
+class AttritubesManager(
+        private val innerList: ArrayList<Attritube> = ArrayList<Attritube>()
+)  : MutableList<Attritube>by innerList{
+
+
+
+
+
 }
