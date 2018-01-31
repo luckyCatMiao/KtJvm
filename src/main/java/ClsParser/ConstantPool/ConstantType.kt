@@ -1,4 +1,4 @@
-package Parser.ConstantPool
+package ClsParser.ConstantPool
 
 object ConstantType {
     var CONSTANT_Class = 7

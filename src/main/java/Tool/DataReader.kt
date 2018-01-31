@@ -7,7 +7,6 @@ import java.io.BufferedInputStream
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
 
 /**
  *
@@ -19,17 +18,9 @@ class DataReader(path: String):DataInputStream(BufferedInputStream(FileInputStre
 
     fun readFully(size:Int):ByteArray{
         checkArgument(size>0,"size must>0!")
-        var size=size
         val arr=ByteArray(size)
-        while(size>0){
-            val hasRead=read(arr)
-            if(hasRead<0){
-                throw RuntimeException("read Error!")
-            }
-            size-=hasRead
-        }
+        readFully(arr)
         return arr
-
 
     }
 }

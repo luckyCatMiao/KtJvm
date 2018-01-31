@@ -1,7 +1,6 @@
-package Parser
+package ClsParser
 
-import Parser.ConstantPool.ConstantPool
-import com.sun.org.apache.xpath.internal.operations.Bool
+import ClsParser.ConstantPool.ConstantPool
 
 /**
  * check class structure
@@ -30,9 +29,9 @@ object ClassChecker{
      * check index of each constant
      */
     fun checkIndexConstantPool(pool: ConstantPool): Unit {
-        pool.list.forEach{
-            //
-        }
+//        pool.list.forEach{
+//            //
+//        }
 
     }
 

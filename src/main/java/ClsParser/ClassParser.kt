@@ -1,6 +1,7 @@
-package Parser
+package ClsParser
 
-import Parser.ConstantPool.ConstantPoolParser
+import KtEx.times
+import ClsParser.ConstantPool.ConstantPoolParser
 import Tool.DataReader
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Preconditions.checkState
@@ -33,8 +34,28 @@ class ClassParser{
         parseAccessFlags()
         parseClassName()
         parseSuperClassName()
+        parseInterfaceNames()
+        parseFields()
 
         println(javaclass)
+
+
+    }
+
+    private fun parseFields() {
+        val count=reader.readUnsignedShort()
+        println(count)
+    }
+
+    private fun parseInterfaceNames() {
+        val interfaceCount= reader.readUnsignedShort()
+        interfaceCount.times {
+            val nameIndex=reader.readUnsignedShort()
+            val check=ClassChecker.checkIndexConstantPoolSingle(javaclass.constantPool,nameIndex)
+            checkState(check, parseError("interfaceNameIndex"))
+            javaclass.interfaceIndexs.add(nameIndex)
+        }
+
 
 
     }
@@ -42,14 +63,14 @@ class ClassParser{
     private fun parseSuperClassName() {
         val index= reader.readUnsignedShort()
         val check=ClassChecker.checkIndexConstantPoolSingle(javaclass.constantPool,index)
-        checkState(check, parseError("superClassName"))
+        checkState(check, parseError("superClassNameIndex"))
         javaclass.superClassNameIndex = index
     }
 
     private fun parseClassName() {
         val index= reader.readUnsignedShort()
         val check=ClassChecker.checkIndexConstantPoolSingle(javaclass.constantPool,index)
-        checkState(check, parseError("className"))
+        checkState(check, parseError("classNameIndex"))
         javaclass.classNameIndex = index
     }
 

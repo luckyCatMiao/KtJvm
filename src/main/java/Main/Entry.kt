@@ -1,6 +1,6 @@
 package Main
 
-import Parser.ClassParser
+import ClsParser.ClassParser
 
 object Entry {
 
