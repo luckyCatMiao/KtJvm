@@ -1,4 +1,7 @@
 package ClsParser.Fields
 
-class FieldManager {
+interface IFieldManager
+
+class FieldManager : IFieldManager {
+
 }

@@ -1,8 +1,7 @@
 package ClsParser.ConstantPool
 
-import KtEx.valueOfObject
-import ClsParser.ClassChecker
 import ClsParser.JavaClass
+import KtEx.valueOfObject
 import Tool.DataReader
 import Tool.ReflectionUtil
 import Tool.equal
@@ -12,10 +11,11 @@ import io.reactivex.Observable
 import kotlin.reflect.KProperty
 
 
-class ConstantPoolParser(val javaclass: JavaClass, val reader: DataReader) {
-    private val pool = ConstantPool()
+class ConstantPoolParser(val javaclass: JavaClass,
+                         val reader: DataReader) {
+    private val pool =HashMap<Int,Constant>()
 
-    fun parse(): ConstantPool {
+    fun parse(): HashMap<Int, Constant> {
 
         val count = reader.readUnsignedShort()
         /**
@@ -27,7 +27,7 @@ class ConstantPoolParser(val javaclass: JavaClass, val reader: DataReader) {
             val slotConsume=parseConstant(i)
             i+=slotConsume
         }
-        ClassChecker.checkIndexConstantPool(pool)
+
         return pool
 
     }

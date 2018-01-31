@@ -1,9 +1,9 @@
 package ClsParser
 
 import ClsParser.Attritubes.AttritubeParser
-import KtEx.times
 import ClsParser.ConstantPool.ConstantPoolParser
 import ClsParser.Fields.Field
+import KtEx.times
 import Tool.DataReader
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Preconditions.checkState
@@ -50,14 +50,15 @@ class ClassParser{
     }
 
     private fun parseField() {
-        val field=Field()
 
         val access_flags=reader.readUnsignedShort()
         val name_index=reader.readUnsignedShort()
         val descriptor_index=reader.readUnsignedShort()
 
+        val field= Field(access_flags,name_index,descriptor_index,javaclass)
+
         val attributesCount=reader.readUnsignedShort()
-        val attrs = AttritubeParser(reader,javaclass.constantPool).parse()
+        val attrs = AttritubeParser(reader,javaclass.constantPool,field).parse()
         field.attrMan.addAll(attrs)
 
     }
@@ -97,7 +98,9 @@ class ClassParser{
     }
 
     private fun parseConstantPool() {
-        javaclass.constantPool=ConstantPoolParser(javaclass,reader).parse()
+        val map=ConstantPoolParser(javaclass,reader).parse()
+        javaclass.constantPool.putAll(map)
+        ClassChecker.checkIndexConstantPool( javaclass.constantPool)
     }
 
     private fun parseVersion(){
