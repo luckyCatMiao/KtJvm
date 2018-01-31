@@ -14,11 +14,14 @@ interface IConstantPool {
     fun getFloatConstant(index: Int): FloatConstant
     fun getLongConstant(index: Int): LongConstant
     fun getDoubleConstant(index: Int): DoubleConstant
+    fun getRawConstant(index: Int): Constant
 }
 
 class ConstantPool(
         private val innerMap: MutableMap<Int,Constant> = HashMap<Int,Constant>()
 ): MutableMap<Int,Constant>by innerMap,IConstantPool {
+
+
 
 
     override fun toString(): String {
@@ -72,8 +75,21 @@ class ConstantPool(
         return getConstant<DoubleConstant>(index)
     }
 
+    override fun getRawConstant(index: Int): Constant {
+        val value=get(index)
+        if(value==null)
+        {
+            throw RuntimeException("\"constant pool error! index:${index} not found!\"")
+        }
+        else
+        {
+            return value
 
-    private fun<E> getConstant(index: Int):E {
+        }
+
+    }
+
+    private fun<E:Constant> getConstant(index: Int):E {
 
 
         val value=get(index)

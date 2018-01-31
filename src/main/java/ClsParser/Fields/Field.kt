@@ -1,7 +1,7 @@
 package ClsParser.Fields
 
 import ClsParser.Attritubes.AttritubesManager
-import ClsParser.ConstantPool.Utf8Constant
+import ClsParser.Descriptor
 import ClsParser.JavaClass
 
 /**
@@ -10,16 +10,22 @@ import ClsParser.JavaClass
 class Field(val access_flags: Int,
             val name_index: Int,
             val descriptor_index: Int,
-            val javaclass: JavaClass) {
+            val javaclass: JavaClass):Descriptor() {
 
+    /**
+     * the name of the field
+     */
     var name:String
     private set
 
 
+
     init {
-        val name=(javaclass.constantPool[name_index] as Utf8Constant).value
+
+        val name=javaclass.getUtf8Constant(name_index).value
+        val des=javaclass.getUtf8Constant(descriptor_index)
         this.name=name
-        println(name)
+        parseDescriptor(des)
 
     }
 

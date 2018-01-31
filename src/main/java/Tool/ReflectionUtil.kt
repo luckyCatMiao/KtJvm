@@ -17,7 +17,7 @@ object ReflectionUtil
     fun isFunction(it:Any)=it is KFunction<*>
 
 
-    private fun<T:KCallable<*>> getByName(name: String, target: Any,resultConsumer:(Any?)->Unit, filter:(KCallable<*>)->Boolean,castClass:Class<T>) {
+    private fun<T:KCallable<*>> getByName(name: String, target: Any, resultConsumer: (Any?) -> Unit, filter: (KCallable<*>) -> Boolean, castClass: Class<T>, args:List<Any> = listOf()) {
         val klass=target::class.java.kotlin
 
         Observable.fromIterable(klass.members)
@@ -39,12 +39,12 @@ object ReflectionUtil
     /**
      * use reflection to call parsing method then add resulted constant to pool
      */
-    fun callMethodByName(name: String, target: Any, resultConsumer:(Any?)->Unit) {
-        getByName(name,target,resultConsumer,{ isFunction(it) },KFunction::class.java)
+    fun callMethodByName(name: String, target: Any, resultConsumer:(Any?)->Unit,args:List<Any> = listOf()) {
+        getByName(name,target,resultConsumer,{ isFunction(it) },KFunction::class.java,args)
 
     }
 
     fun getPropertyByName(name: String, target: Any, resultConsumer:(Any?)->Unit) {
-        getByName(name,target,resultConsumer,{ isProperty(it) },KProperty::class.java)
+        getByName(name, target, resultConsumer, { isProperty(it) }, KProperty::class.java)
     }
 }
