@@ -2,16 +2,12 @@ package ClsParser
 
 import ClsParser.Attritubes.AttritubesManager
 import ClsParser.ConstantPool.Utf8Constant
+import KtJVM.FieldTypeInfo
+import KtJVM.MemberType
+import KtJVM.TypeInfo
 import kotlin.reflect.KClass
 
-enum class MemberType {
-    Class, Field, Method
-}
 
-open class TypeInfo()
-class FieldTypeInfo(type: KClass<out Any>) : TypeInfo()
-class MethodTypeInfo() : TypeInfo()
-class ClassTypeInfo() : TypeInfo()
 
 /**
  * the base class for all number of class which have descriptors

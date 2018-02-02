@@ -2,7 +2,7 @@ package ClsParser.Fields
 
 import ClsParser.Descriptor
 import ClsParser.JavaClass
-import ClsParser.MemberType
+import KtJVM.MemberType
 
 /**
  * represent a field of class
