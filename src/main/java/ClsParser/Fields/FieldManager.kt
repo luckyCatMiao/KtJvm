@@ -2,6 +2,7 @@ package ClsParser.Fields
 
 interface IFieldManager
 
-class FieldManager : IFieldManager {
+class FieldManager : IFieldManager{
+
 
 }

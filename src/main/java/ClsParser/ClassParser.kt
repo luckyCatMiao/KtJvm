@@ -11,6 +11,7 @@ import java.io.File
 
 
 class ClassParser{
+
     private lateinit var path: String
     private lateinit var javaclass: JavaClass
     private lateinit var reader: DataReader
@@ -21,7 +22,6 @@ class ClassParser{
         this.javaclass=JavaClass()
         this.reader= DataReader(path)
         parseClass()
-
 
     }
 
@@ -72,8 +72,6 @@ class ClassParser{
             javaclass.interfaceIndexs.add(nameIndex)
         }
 
-
-
     }
 
     private fun parseSuperClassName() {
@@ -119,6 +117,9 @@ class ClassParser{
         checkState(check, parseError("magic"))
         javaclass.magic = magic
     }
+
+
+
 
     /**
      * return a description of error
