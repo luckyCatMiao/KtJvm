@@ -6,7 +6,8 @@ import KtJVM.FieldTypeInfo
 import KtJVM.MemberType
 import KtJVM.TypeInfo
 import kotlin.reflect.KClass
-
+import KtEx.toType
+import KtJVM.RuntimeType
 
 
 /**
@@ -14,17 +15,20 @@ import kotlin.reflect.KClass
  */
 abstract class Descriptor(val memberType: MemberType) {
 
+    companion object {
+        private val runtimeType = listOf(
+                Byte::class.toType(),
+                Short::class.toType(),
+                Char::class.toType(),
+                Int::class.toType(),
+                Long::class.toType(),
+                Float::class.toType(),
+                Double::class.toType(),
+                Boolean::class.toType()
+        )
+    }
 
-    private val runtimeType = listOf(
-            Byte::class,
-            Short::class,
-            Char::class,
-            Int::class,
-            Long::class,
-            Float::class,
-            Double::class,
-            Boolean::class
-    )
+
 
 
     /**
@@ -52,6 +56,7 @@ abstract class Descriptor(val memberType: MemberType) {
 
         match = f_reg2.matchEntire(v)
         if (match != null) {
+            //parseObjectType(match)
             return
         }
 
@@ -69,7 +74,7 @@ abstract class Descriptor(val memberType: MemberType) {
     }
 
     private fun parseFieldType(value: String) {
-        fun getMemberByName(value: String): KClass<out Any> {
+        fun getMemberByName(value: String): RuntimeType<out Any> {
             return runtimeType
                     .filter {
                         it.simpleName!!
@@ -82,8 +87,8 @@ abstract class Descriptor(val memberType: MemberType) {
         //J 、 F 和 D 。注意， long 的描述符是 J 而不是 L 。
 
         val type = when (value) {
-            "J" -> Long::class
-            "Z" -> Boolean::class
+            "J" -> Long::class.toType()
+            "Z" -> Boolean::class.toType()
             "B", "S", "C", "I", "F", "D" -> getMemberByName(value)
             else -> throw RuntimeException("fieldType parse error! the value:$value can't be parsed!")
         }

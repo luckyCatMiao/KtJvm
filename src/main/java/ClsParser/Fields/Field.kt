@@ -2,6 +2,7 @@ package ClsParser.Fields
 
 import ClsParser.Descriptor
 import ClsParser.JavaClass
+import KtJVM.FieldTypeInfo
 import KtJVM.MemberType
 
 /**
@@ -10,7 +11,7 @@ import KtJVM.MemberType
 class Field(val access_flags: Int,
             val name_index: Int,
             val descriptor_index: Int,
-            val javaclass: JavaClass):Descriptor(MemberType.Field) {
+            javaclass: JavaClass):Descriptor(MemberType.Field) {
 
     /**
      * the name of the field
@@ -18,6 +19,8 @@ class Field(val access_flags: Int,
     var name:String
     private set
 
+    val type
+        get() = {(typeInfo as FieldTypeInfo).type}
 
 
     init {
@@ -28,6 +31,8 @@ class Field(val access_flags: Int,
         parseFieldDescriptor(des)
 
     }
+
+
 
 
 
