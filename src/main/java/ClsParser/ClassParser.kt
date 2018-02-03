@@ -64,7 +64,6 @@ class ClassParser{
         val descriptor_index=reader.readUnsignedShort()
 
         val method= Method(access_flags,name_index,descriptor_index,javaclass)
-
         val attrs = AttritubeParser(reader, javaclass.constantPool).parse()
         method.attrMan.addAll(attrs)
     }

@@ -27,9 +27,15 @@ class AttritubeParser(val reader: DataReader,
         val name = constantPool.getUtf8Constant(attribute_name_index).value
 
         val methodName = "parse" + name
-        ReflectionUtil.callMethodByName(methodName, this, { list.add(it as Attritube) }, name to attribute_length)
+        val resultConsumer: (Any?) -> Unit = {
+            if (it !is NotSupportAttribute) {
+                list.add(it as Attritube)
+            }
+        }
+        ReflectionUtil.callMethodByName(methodName, this, resultConsumer, name to attribute_length)
 
     }
+
 
     fun parseConstantValue(pair: Pair<String, Long>): ConstantValueAttritube {
 
@@ -48,12 +54,31 @@ class AttritubeParser(val reader: DataReader,
 
         val (name, length) = pair
         val max_stack = reader.readUnsignedShort()
-        val max_locals=reader.readUnsignedShort()
-        val code_length=reader.readUnsignedInt()
-        val codes = CodeParser(reader, code_length).parse()
+        val max_locals = reader.readUnsignedShort()
+        val code_length = reader.readUnsignedInt()
+        val codes = CodeParser(reader, code_length, constantPool).parse()
 
         return CodeAttribute(codes)
     }
 
+    fun parseLocalVariableTable(pair: Pair<String, Long>): NotSupportAttribute {
+        val (name, length) = pair
+        jumpParse(length)
+        return NotSupportAttribute()
+    }
+
+    fun parseLineNumberTable(pair: Pair<String, Long>): NotSupportAttribute {
+        val (name, length) = pair
+        jumpParse(length)
+        return NotSupportAttribute()
+    }
+
+    /**
+     * jump the parse
+     */
+    private fun jumpParse(length: Long) {
+
+        reader.readFully(length.toInt())
+    }
 
 }
