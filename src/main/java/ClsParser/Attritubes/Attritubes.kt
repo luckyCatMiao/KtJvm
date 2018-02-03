@@ -1,6 +1,7 @@
 package ClsParser.Attritubes
 
 import ClsParser.ConstantPool.NumberConstant
+import KtJVM.Code.Code
 
 open class Attritube(){
 
@@ -10,4 +11,4 @@ open class Attritube(){
 
 
 class ConstantValueAttritube(value: NumberConstant) :Attritube()
-class CodeAttribute() :Attritube()
+class CodeAttribute(codes: List<Code>) :Attritube()

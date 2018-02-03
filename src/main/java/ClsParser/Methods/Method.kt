@@ -1,7 +1,5 @@
 package ClsParser.Methods
 
-import ClsParser.Attritubes.AttritubesManager
-import ClsParser.ConstantPool.Utf8Constant
 import ClsParser.Descriptor
 import ClsParser.JavaClass
 import KtJVM.MemberType

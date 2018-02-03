@@ -40,9 +40,14 @@ class ClassParser{
         parseInterfaceNames()
         parseFields()
         parseMethods()
+        parseAttributes()
 
         println(javaclass)
 
+
+    }
+
+    private fun parseAttributes() {
 
     }
 

@@ -1,4 +1,4 @@
-package KtJVM.Command
+package KtJVM.CmdCommand
 
 import KtJVM.Jvm
 

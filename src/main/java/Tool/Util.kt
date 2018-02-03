@@ -1,9 +1,9 @@
 package Tool
 
-import KtJVM.Command.BaseCommand
-import KtJVM.Command.HelpCommand
-import KtJVM.Command.RunCommand
-import KtJVM.Command.VersionCommand
+import KtJVM.CmdCommand.BaseCommand
+import KtJVM.CmdCommand.HelpCommand
+import KtJVM.CmdCommand.RunCommand
+import KtJVM.CmdCommand.VersionCommand
 
 fun equal(a:Any?,b:Any?):Boolean{
     if(a==null||b==null)

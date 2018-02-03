@@ -3,6 +3,7 @@ package ClsParser.Attritubes
 import ClsParser.ConstantPool.ConstantPool
 import ClsParser.ConstantPool.NumberConstant
 import KtEx.times
+import KtJVM.Code.CodeParser
 import Tool.DataReader
 import Tool.ReflectionUtil
 
@@ -49,9 +50,9 @@ class AttritubeParser(val reader: DataReader,
         val max_stack = reader.readUnsignedShort()
         val max_locals=reader.readUnsignedShort()
         val code_length=reader.readUnsignedInt()
-        val codes = reader.readFully(code_length.toInt())
+        val codes = CodeParser(reader, code_length).parse()
 
-        return CodeAttribute()
+        return CodeAttribute(codes)
     }
 
 
