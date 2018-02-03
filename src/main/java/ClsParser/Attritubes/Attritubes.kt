@@ -10,3 +10,4 @@ open class Attritube(){
 
 
 class ConstantValueAttritube(value: NumberConstant) :Attritube()
+class CodeAttribute() :Attritube()

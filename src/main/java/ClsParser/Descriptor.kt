@@ -5,7 +5,6 @@ import ClsParser.ConstantPool.Utf8Constant
 import KtJVM.FieldTypeInfo
 import KtJVM.MemberType
 import KtJVM.TypeInfo
-import kotlin.reflect.KClass
 import KtEx.toType
 import KtJVM.RuntimeType
 
@@ -13,7 +12,11 @@ import KtJVM.RuntimeType
 /**
  * the base class for all number of class which have descriptors
  */
-abstract class Descriptor(val memberType: MemberType) {
+abstract class Descriptor(val memberType: MemberType,
+                          val access_flags: Int,
+                          val name_index: Int,
+                          val descriptor_index: Int,
+                          javaclass: JavaClass) {
 
     companion object {
         private val runtimeType = listOf(
@@ -28,8 +31,11 @@ abstract class Descriptor(val memberType: MemberType) {
         )
     }
 
-
-
+    /**
+     * the name of the field
+     */
+    var name:String
+        private set
 
     /**
      * attrs
@@ -39,6 +45,27 @@ abstract class Descriptor(val memberType: MemberType) {
     lateinit var typeInfo: TypeInfo
         private set
 
+    init {
+        val name=javaclass.getUtf8Constant(name_index).value
+        val des=javaclass.getUtf8Constant(descriptor_index)
+        this.name=name
+        when(memberType)
+        {
+            MemberType.Field-> parseFieldDescriptor(des)
+            MemberType.Method->parseMethodDescriptor(des)
+            MemberType.Class->parseClassDescriptor(des)
+        }
+
+
+    }
+
+     fun parseClassDescriptor(des: Utf8Constant){
+
+     }
+
+    fun parseMethodDescriptor(des: Utf8Constant){
+
+     }
 
     val f_reg1 = """[BSCIJFDZ]""".toRegex()
     val f_reg2 = """L.+?;""".toRegex()

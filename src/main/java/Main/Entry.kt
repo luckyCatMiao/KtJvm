@@ -16,7 +16,7 @@ object Entry {
 //                .subscribe{command->command.run()}
 
 
-        ClassParser().parse("test.class")
+        ClassParser().parse("TestClass2.class")
 
 
     }

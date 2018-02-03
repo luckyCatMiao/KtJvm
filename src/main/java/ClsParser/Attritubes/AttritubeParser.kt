@@ -2,18 +2,25 @@ package ClsParser.Attritubes
 
 import ClsParser.ConstantPool.ConstantPool
 import ClsParser.ConstantPool.NumberConstant
-import ClsParser.Fields.Field
+import KtEx.times
 import Tool.DataReader
 import Tool.ReflectionUtil
 
 
 class AttritubeParser(val reader: DataReader,
-                      val constantPool: ConstantPool,
-                      val field: Field) {
+                      val constantPool: ConstantPool) {
 
     fun parse(): List<Attritube> {
 
         val list = ArrayList<Attritube>()
+        val attributesCount = reader.readUnsignedShort()
+        attributesCount.times {
+            parseAttribute(list)
+        }
+        return list
+    }
+
+    private fun parseAttribute(list: ArrayList<Attritube>) {
         val attribute_name_index = reader.readUnsignedShort()
         val attribute_length = reader.readUnsignedInt()
         val name = constantPool.getUtf8Constant(attribute_name_index).value
@@ -21,10 +28,9 @@ class AttritubeParser(val reader: DataReader,
         val methodName = "parse" + name
         ReflectionUtil.callMethodByName(methodName, this, { list.add(it as Attritube) }, name to attribute_length)
 
-        return list
     }
 
-    fun parseConstantValue(pair: Pair<Int, Long>): ConstantValueAttritube {
+    fun parseConstantValue(pair: Pair<String, Long>): ConstantValueAttritube {
 
         val (name, length) = pair
 
@@ -34,6 +40,18 @@ class AttritubeParser(val reader: DataReader,
 
 
         return ConstantValueAttritube(value)
+    }
+
+
+    fun parseCode(pair: Pair<String, Long>): CodeAttribute {
+
+        val (name, length) = pair
+        val max_stack = reader.readUnsignedShort()
+        val max_locals=reader.readUnsignedShort()
+        val code_length=reader.readUnsignedInt()
+        val codes = reader.readFully(code_length.toInt())
+
+        return CodeAttribute()
     }
 
 

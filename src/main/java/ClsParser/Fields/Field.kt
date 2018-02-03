@@ -8,16 +8,11 @@ import KtJVM.MemberType
 /**
  * represent a field of class
  */
-class Field(val access_flags: Int,
-            val name_index: Int,
-            val descriptor_index: Int,
-            javaclass: JavaClass):Descriptor(MemberType.Field) {
+class Field( access_flags: Int,
+             name_index: Int,
+             descriptor_index: Int,
+            javaclass: JavaClass):Descriptor(MemberType.Field,access_flags,name_index,descriptor_index,javaclass) {
 
-    /**
-     * the name of the field
-     */
-    var name:String
-    private set
 
     val type
         get() = {(typeInfo as FieldTypeInfo).type}
@@ -25,10 +20,9 @@ class Field(val access_flags: Int,
 
     init {
 
-        val name=javaclass.getUtf8Constant(name_index).value
-        val des=javaclass.getUtf8Constant(descriptor_index)
-        this.name=name
-        parseFieldDescriptor(des)
+
+
+
 
     }
 
