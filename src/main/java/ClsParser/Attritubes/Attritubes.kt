@@ -2,7 +2,6 @@ package ClsParser.Attritubes
 
 import ClsParser.ConstantPool.NumberConstant
 import KtJVM.Code.Code
-import java.util.jar.Attributes
 
 open class Attritube(){
 
